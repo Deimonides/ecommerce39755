@@ -1,0 +1,7 @@
+node_modules/
+dbCart.json
+dbProducts.json
+dbProducts.bkp
+mongodb_products.json
+.env.*
+_*
