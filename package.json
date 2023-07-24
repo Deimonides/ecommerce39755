@@ -2,8 +2,8 @@
   "name": "ecommerce39755",
   "version": "1.0.0",
   "description": "",
-  "main": "src/app.js",
   "type": "module",
+  "main": "src/app.js",
   "scripts": {
     "start": "node .",
     "dev": "nodemon ."

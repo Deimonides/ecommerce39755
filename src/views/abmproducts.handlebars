@@ -1,0 +1,200 @@
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+<script> // ELIMINAR PRODUCTO
+    function deleteProduct(code) { 
+        fetch(`http://localhost:8080/products/${code}`, {
+            method: "delete",
+        })
+        $('#confirmDeletModal').modal('hide')
+        window.location.href = `http://localhost:8080/products/abmproducts`
+    }
+</script>
+
+
+<script> // ACTUALIZAR PRODUCTO
+    function updateProduct(param) { 
+        //alert("Modificando...")
+        fetch(`http://localhost:8080/products/${param}`, {
+            method: 'put',
+            body: JSON.stringify({
+                code:           document.getElementById('form0').value,
+                name:           document.getElementById('form1').value,
+                description:    document.getElementById('form2').value,
+                price:          document.getElementById('form3').value,
+                stock:          document.getElementById('form4').value,
+                category:       document.getElementById('form5').value,
+                thumbnails:     [ document.getElementById('form6').value,
+                                  document.getElementById('form7').value,
+                                  document.getElementById('form8').value
+                                ]
+            }),
+                headers:{
+                    'Content-Type': 'application/json'
+            }
+        })
+        window.location.href = `http://localhost:8080/products/abmproducts/${param}`
+    }
+</script>
+
+
+<script> // BUSQUEDA EN EL DROPDOWN
+    function filterFunction() {
+        var input, filter, ul, li, a, i;
+        input = document.getElementById("drpSearch");
+        filter = input.value.toUpperCase();
+        div = document.getElementById("dropdownList");
+        a = div.getElementsByTagName("a");
+        for (i = 0; i < a.length; i++) {
+            txtValue = a[i].textContent || a[i].innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+            a[i].style.display = "";
+            } else {
+            a[i].style.display = "none";
+            }
+        }
+    } 
+</script>
+
+
+<div style="margin: 20px ">
+    <h1 class="text-center">ABM de Productos</h1>
+
+    {{!-- **************************************************************************************************************************** --}}
+    {{!-- DROPDOWN PARA SELLECION DE PRODUCTO --}}
+    <div class="dropdown">
+        <div class="dropdown show">
+            <button class="btn btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Seleccione un producto
+            </button>
+
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuLink" id="dropdownList">
+            {{!-- <div> --}}
+                <input type="text" class="dropdown-item" placeholder="? Buscar..." id="drpSearch" onkeyup="filterFunction()">
+                {{#each products}}
+                    <a class="dropdown-item" href="/products/abmproducts/{{this.code}}">{{this.title}} ({{this.code}})</a>
+                    {{!-- <a class="link" href="/{{this.code}}">{{this.title}}</a> --}}
+                {{/each}}
+            {{!-- </div> --}}
+        </div>
+    </div>
+    
+    {{!-- **************************************************************************************************************************** --}}
+    {{!-- FORM DE EDICION --}}
+    <div class="p-8 d-flex flex-wrap justify-content-center" style="margin: 40px">
+        <form action="/products" method="post" class="p-5 w-50" id="formABM">
+            {{!-- importante poner los name igual a los campos del schema --}}
+            
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text font-weight-bold" id="basic-addon1" style="width: 150px">CODIGO *</span>
+                </div>
+                <input id="form0" name="code" type="text" class="form-control required" value="{{oneProduct.code}}" aria-label="code" aria-describedby="basic-addon1">
+            </div>
+
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text font-weight-bold" id="basic-addon1" style="width: 150px">TITULO *</span>
+                </div>
+                <input id="form1" name="title" type="text" class="form-control required" value="{{oneProduct.title}}" aria-label="title" aria-describedby="basic-addon1">
+            </div>
+
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1" style="width: 150px">DESCRIPCIÓN</span>
+                </div>
+                <input id="form2" name="description" type="text" class="form-control" value="{{oneProduct.description}}" aria-label="description" aria-describedby="basic-addon1">
+            </div>
+
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text font-weight-bold" id="basic-addon1" style="width: 150px">PRECIO *</span>
+                </div>
+                <input id="form3" name="price" type="number" class="form-control required" value="{{oneProduct.price}}" aria-label="price" aria-describedby="basic-addon1">
+            </div>
+
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1" style="width: 150px">STOCK</span>
+                </div>
+                <input id="form4" name="stock" type="number" class="form-control" value="{{oneProduct.stock}}" aria-label="stock" aria-describedby="basic-addon1">
+            </div>
+
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text font-weight-bold " id="basic-addon1" style="width: 150px">CATEGORÍA *</span>
+                </div>
+                <input id="form5" name="category" type="text" class="form-control required" value="{{oneProduct.category}}" aria-label="category" aria-describedby="basic-addon1">
+            </div>
+
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text w-500px  font-weight-bold" id="basic-addon1" style="width: 150px">URL IMAGEN 1 *</span>
+                </div>
+                <input id="form6" name="thumbnails" type="text" class="form-control required" value="{{oneProduct.thumbnails.[0]}}" aria-label="thumbnails" aria-describedby="basic-addon1">
+            </div>
+
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text " id="basic-addon1" style="width: 150px">URL IMAGEN 2</span>
+                </div>
+                <input id="form7" name="thumbnails" type="text" class="form-control" value="{{oneProduct.thumbnails.[1]}}" aria-label="thumbnails" aria-describedby="basic-addon1">
+            </div>
+
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text required" id="basic-addon1" style="width: 150px">URL IMAGEN 3</span>
+                </div>
+                <input id="form8" name="thumbnails" type="text" class="form-control" value="{{oneProduct.thumbnails.[2]}}" aria-label="thumbnails" aria-describedby="basic-addon1">
+            </div>
+            <div class="d-flex justify-content-around  mt-5">
+                {{!-- <input class="btn btn-primary" type="submit" value="Actualizar"> --}}
+                <button type="submit"  class="btn btn-success">CREATE</button>
+
+                <button type="button"  class="btn btn-warning" onclick="updateProduct('{{oneProduct.code}}')">UPDATE</button>
+
+                <button type="button"  class="btn btn-danger" data-toggle="modal"  data-target="#confirmDeletModal">DELETE</button>
+
+                <a type="reset"  class="btn btn-secondary" href="/products/abmproducts/">RESET</a>
+            
+         
+            </div>
+
+            <div class="d-flex justify-content-around mt-4">
+
+                <p >(ToDo: ocultar botones segun corresponda)</p>
+            </div>
+
+        </form>
+    </div>
+
+    {{!-- **************************************************************************************************************************** --}}
+    <!-- MODAL CONFIRMAR ELIMINAR Y BOTON ELIMINAR -->
+    <div class="modal fade" id="confirmDeletModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenterTitle">Confirmar eliminación</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body d-flex d-inline">
+                <img src="{{oneProduct.thumbnails.[1]}}" alt="" style="width: 80px; margin: 15px">
+                <div class="d-flex flex-column">
+                    <span>Titulo: {{oneProduct.title}}</span>
+                    <span>Código: {{oneProduct.code}}</span>
+                    <span>Precio: ${{oneProduct.price}}</span>
+                    <span>Stock: {{oneProduct.stock}}</span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" onclick="deleteProduct('{{oneProduct.code}}')">Aceptar</button>
+            </div>
+            </div>
+        </div>
+    </div>
+
+</div>

@@ -1,6 +1,6 @@
 import passport from "passport";
 import GithubStrategy from "passport-github2";
-import userModel from "../models/user.model.js";
+import userModel from '../dao/models/user.model.js'
 import { createHash } from "./bcrypt.js";
 // import fs from 'fs';
 import dotenv from 'dotenv';

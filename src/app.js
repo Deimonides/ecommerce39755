@@ -7,10 +7,17 @@ import session from 'express-session'
 import MongoStore from 'connect-mongo'
 import passport from 'passport'
 import local from 'passport-local'
-import initializePassport from './utils/passport.js'
-import initializePassportGH from './utils/github.js'
+import initializePassport from './config/passport.js'
+import initializePassportGH from './config/github.js'
 import { Command } from 'commander'
 import dotenv from 'dotenv'
+
+import productsRouter from './routes/products.router.js'
+import cartsRouter    from './routes/carts.router.js'
+import sessionRouter  from './routes/session.router.js'
+// import realTimeProductsRouter from './routes/realTimeProducts.router.js'
+// import newProductRouter from './routes/newProduct.router.js'
+
 
 const app = express()
 
@@ -37,21 +44,21 @@ app.use(express.static('./src/public'))
     app.use(session({
         store: MongoStore.create({
             mongoUrl: MONGO_URI,
-            dbName: 'server39755',
+            dbName: 'ecommerce39755',
             ttl: 60 * 30 , // media hora
             mongoOptions: {
                 useNewUrlParser: true,
                 useUnifiedTopology: true
             }
         }),
-        secret: 'pipi-pupu',
+        secret: '$0l0tuN',
         resave: true,
         saveUninitialized: true
     }))
     
     // const ProductManager = require('./ProductManager.js')
-    import ProductManager from './dao/ProductManager.js'
-    const productManager = new ProductManager('./dbProducts.json')
+    // import ProductManager from './dao/ProductManager.js'
+    // const productManager = new ProductManager('./dbProducts.json')
     
     // Handlebars templates
     app.engine('handlebars', handlebars.engine())
@@ -60,25 +67,23 @@ app.use(express.static('./src/public'))
     
     // Endpoints
     // import productsRouter from './routes/products.router.js'
-    // app.use('/api/products', productsRouter)
     
     // import cartRouter from './routes/cart.router.js'
     // app.use('/api/cart', cartRouter)
     
-    import productsRouter from './routes/products.router.js'
+    // app.use('/api/products', productsRouter)
+    // app.use('/api/carts', cartsRouter)
+    // app.use('/api/products', apiRouter)
+    // app.use('/api/carts', apiRouter)
     app.use('/products', productsRouter)
-    
-    import cartsRouter    from './routes/carts.router.js'
-    app.use('/api/carts', cartsRouter)
-    
-    import accountRouter  from './routes/account.router.js'
-    app.use('/account', accountRouter)
+    app.use('/carts', cartsRouter)
+    app.use('/session', sessionRouter)
     
     
-    // import realTimeProductsRouter from './routes/realTimeProducts.router.js'
+    
+    
     // app.use('/realtimeproducts', realTimeProductsRouter)
     
-    // import newProductRouter from './routes/newProduct.router.js'
     // app.use('/newProduct', newProductRouter)
     
 // PASSPORT
